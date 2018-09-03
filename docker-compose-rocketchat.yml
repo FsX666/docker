@@ -1,0 +1,55 @@
+version: '2'
+
+services:
+
+# https://rocket.chat/docs/installation/docker-containers/docker-compose/
+  # https://raw.githubusercontent.com/RocketChat/Rocket.Chat/develop/docker-compose.yml
+
+  rocketchat:
+    container_name: rocketchat
+    image: rocketchat/rocket.chat:latest
+    restart: unless-stopped
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/home/fsx/docker-storage/rocketchat/data/uploads:/app/uploads"
+      - "/home/fsx/docker-storage/rocketchat/scripts:/app/scripts"
+      - "/etc/localtime:/usr/share/zoneinfo/posixrules:ro" 
+    environment:
+      - "PORT=3000"
+      - "ROOT_URL=http://___your_domain_name___"
+      - "MONGO_URL=mongodb://mongo:27017/rocketchat"
+      - "MONGO_OPLOG_URL=mongodb://mongo:27017/local"
+    depends_on:
+      - mongo
+      - mongo-init-replica
+   # ports:
+    #   - 3000:3000
+    labels:
+      - "traefik.backend=rocketchat"
+      - "traefik.frontend.rule=Host:___your_domain_name___"
+      - "traefik.frontend.entryPoints=http,https"
+      - "traefik.port=3000"
+  mongo:
+    container_name: mongo
+    image: mongo:3.7.2
+    restart: unless-stopped
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/home/fsx/docker-storage/mongo/data/db:/data/db"
+      - "/home/fsx/docker-storage/mongo/data/backups:/dump"
+    command: mongod --smallfiles --oplogSize 128 --replSet rs0
+    labels:
+      - "traefik.enable=false"
+  mongo-init-replica:
+    container_name: mongo-replica
+    image: mongo:3.7.2
+    command: 'mongo mongo/rocketchat --eval "rs.initiate({ _id: ''rs0'', members: [ { _id: 0, host: ''localhost:27017'' } ]})"'
+    depends_on:
+      - mongo
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+
+

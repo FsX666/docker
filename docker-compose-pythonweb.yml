@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+  pythonweb:
+    container_name: pythonweb
+    image: trinitronx/python-simplehttpserver:latest
+    network_mode: "bridge"
+    ports:
+      - "8080:8080"
+    environment:
+      - "TZ=Europe/Paris"
+    volumes:
+      - "/home/fsx/download/maxou:/var/www:ro"
+      - "/etc/localtime:/usr/share/zoneinfo/posixrules:ro" 
+    labels:
+      - 'traefik.enable=true'
+      - "traefik.frontend.rule=Host:___your_domain_name___"
+      - "traefik.port=8080"
+      - "traefik.backend=pythonweb"
+      - "traefik.frontend.entryPoints=http,https"
+      - "traefik.frontend.auth.basic=___user___:___hash___"
+    restart: unless-stopped

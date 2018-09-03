@@ -1,0 +1,28 @@
+version: '2'
+
+services:
+  traefik:
+    container_name: traefik
+    image: traefik:latest
+    network_mode: "host"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/home/fsx/docker-storage/traefik/traefik.toml:/etc/traefik/traefik.toml"
+      - "/home/fsx/docker-storage/traefik/acme:/etc/traefik/acme"
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "/etc/localtime:/usr/share/zoneinfo/posixrules:ro" 
+    restart: unless-stopped
+    environment:
+      - "TZ=Europe/Paris"
+      - "OVH_ENDPOINT=ovh-eu"
+      - "OVH_APPLICATION_KEY=___app_key___"
+      - "OVH_APPLICATION_SECRET=___app_secret___"
+      - "OVH_CONSUMER_KEY=___consumer_key___"
+    labels:
+      - "traefik.frontend.rule=Host:___your_domain_name___"
+      - "traefik.port=8081"
+      - "traefik.backend=traefik"
+      - "traefik.frontend.entryPoints=http,https"
+

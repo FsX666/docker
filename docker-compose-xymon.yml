@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+  xymon:
+    container_name: xymon
+    image: deweysasser/xymon:latest
+    hostname: xymon
+    ports:
+      - "1984:1984"
+    network_mode: "bridge"
+    environment:
+      - CONTAINER_TIMEZONE=Europe/Paris
+      - GID=1001
+      - UID=1001
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/fsx/docker-storage/xymon/config:/etc/xymon
+      - /home/fsx/docker-storage/xymon/data:/var/lib/xymon
+      - /home/fsx/docker-storage/xymon/config/pushbullet:/usr/local/bin/pushbullet
+      - "/etc/localtime:/usr/share/zoneinfo/posixrules:ro" 
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.frontend.rule=Host:___your_domain_name___'
+      - 'traefik.backend=xymon'
+      - 'traefik.frontend.entryPoints=http,https'
+      - 'traefik.frontend.auth.basic=___user___:___htpassword_hash___'
+

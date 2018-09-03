@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  nextcloud_db:
+    image: mariadb
+    container_name: nextcloud_db
+    network_mode: 'cloud'
+    restart: always
+    volumes:
+      - "/home/fsx/docker-storage/datadir_mariadb/nextcloud/db:/var/lib/mysql"
+      - "/etc/localtime:/etc/localtime:ro" #TO HAVE CORRECT TIME INSIDE CONTAINER
+    environment:
+      - "MYSQL_HOST=localhost"
+      - "MYSQL_DATABASE=nextcloud"
+      - "MYSQL_USER=___nextcloud_user___"
+      - "MYSQL_PASSWORD=___nextcloud_user_password___"
+      - "MYSQL_ROOT_PASSWORD=___password___"
+
+
+  nextcloud_front:
+    image: nextcloud:apache
+    container_name: nextcloud_front
+    network_mode: 'cloud'
+    restart: always
+    ports:
+      - 80
+    volumes:
+      - "/home/fsx/docker-storage/nextcloud:/var/www/html"
+      - "/etc/localtime:/etc/localtime:ro" #TO HAVE CORRECT TIME INSIDE CONTAINER
+    environment:
+      - "MYSQL_HOST=nextcloud_db"
+      - "MYSQL_DATABASE=nextcloud"
+      - "MYSQL_USER=___nextcloud_user___"
+      - "MYSQL_PASSWORD=___nextcloud_user_password___"
+    depends_on:
+      - nextcloud_db
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.port=80'
+      - 'traefik.frontend.entryPoints=http,https'
+      - 'traefik.frontend.rule=Host:___your_domain_name___'
+      - 'traefik.backend=nextcloud_front'

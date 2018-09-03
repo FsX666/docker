@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+  rutorrent:
+    container_name: rutorrent
+    image: xataz/rtorrent-rutorrent:filebot
+    hostname: dl
+    ports:
+      - "45567:45567"
+      - "9528:9528/udp"
+      - "45001:45001"
+    network_mode: "bridge"
+    environment:
+      - "TZ=Europe/Paris"
+      - UID=1002
+      - GID=1002
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.frontend.rule=Host:___your_domain_name___'
+      - 'traefik.backend=dl'
+      - 'traefik.frontend.entryPoints=http,https'
+      - 'traefik.frontend.auth.basic=___user___:___hash___'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock #api docker
+      - /home/fsx/docker-storage/rutorrent/config:/config #config web
+      - /home/fsx/docker-storage/rutorrent/data:/data # .torrents
+      - /media/dl/rutorrent:/data/torrents # uniquement les fichiers téléchargés (yggtorrent.com)
+      - "/etc/localtime:/usr/share/zoneinfo/posixrules:ro" 
+

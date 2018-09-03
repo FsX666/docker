@@ -1,0 +1,20 @@
+version: '2'
+
+services:
+  myip:
+    container_name: myip
+    image: joshdvir/ipd:latest
+    hostname: myip
+    network_mode: "bridge"
+    environment:
+      - "TZ=Europe/paris"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/etc/localtime:/usr/share/zoneinfo/posixrules:ro" 
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.frontend.rule=Host:___your_domain_name___'
+      - "traefik.port=8080" 
+      - 'traefik.backend=myip'
+      - 'traefik.frontend.entryPoints=http,https'
+

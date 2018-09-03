@@ -1,0 +1,18 @@
+version: '2'
+
+services:
+  portainer:
+    container_name: portainer
+    image: portainer/portainer:latest
+    network_mode: "bridge"
+    labels:
+      - 'traefik.enable=true'
+      - "traefik.frontend.rule=Host:___your_domain_name___"
+      - "traefik.port=9000"
+      - "traefik.backend=portainer"
+      - "traefik.frontend.entryPoints=http,https"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/home/fsx/docker-storage/portainer:/data"
+      - "/etc/localtime:/usr/share/zoneinfo/posixrules:ro" 
+    restart: unless-stopped

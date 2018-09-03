@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+  pureftpd:
+    container_name: pureftpd
+    image: stilliard/pure-ftpd
+    hostname: ftp
+    ports:
+      - "21:21"
+      - "30000-30099:30000-30099"
+    network_mode: "bridge"
+    environment:
+      - "TZ=Europe/Paris"
+      - "PUBLICHOST=localhost"
+      - UID=1003
+      - GID=1003
+    volumes:
+      - "/home/fsx/docker-storage/pure-ftpd/passwd:/etc/pure-ftpd/passwd"
+      - "/home/fsx/download:/home/ftpusers/"
+      - "/etc/localtime:/usr/share/zoneinfo/posixrules:ro" 
+

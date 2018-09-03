@@ -17,7 +17,7 @@ services:
       - "/etc/localtime:/usr/share/zoneinfo/posixrules:ro" 
     environment:
       - "PORT=3000"
-      - "ROOT_URL=http://___your_domain_name___"
+      - "ROOT_URL=https://___your_domain_name___"
       - "MONGO_URL=mongodb://mongo:27017/rocketchat"
       - "MONGO_OPLOG_URL=mongodb://mongo:27017/local"
     depends_on:

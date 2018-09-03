@@ -15,7 +15,8 @@ services:
       - "MYSQL_USER=___nextcloud_user___"
       - "MYSQL_PASSWORD=___nextcloud_user_password___"
       - "MYSQL_ROOT_PASSWORD=___password___"
-
+      - UID=1003
+      - GID=1003
 
   nextcloud_front:
     image: nextcloud:apache
